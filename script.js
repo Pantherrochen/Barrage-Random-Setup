@@ -1,4 +1,5 @@
-// script.js
+// script.js (updated)
+// Data
 const data = {
   bonusTiles: ["Bonus A","Bonus B","Bonus C","Bonus D","Bonus E","Bonus F"],
   advTech: ["Base I","Elevation I","Conduit I","Powerhouse I","Wildcard I"],
@@ -28,6 +29,7 @@ function $all(sel){return Array.from(document.querySelectorAll(sel))}
 
 let players = 4;
 
+// player buttons
 $all('.player-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     $all('.player-btn').forEach(b=>b.classList.remove('active'));
@@ -36,6 +38,7 @@ $all('.player-btn').forEach(btn=>{
   });
 });
 
+// leeghwater toggle
 $('#leeghwaterToggle').addEventListener('change', e=>{
   $('#leeghwaterOptions').classList.toggle('hidden', !e.target.checked);
 });
@@ -59,21 +62,27 @@ function generateAll(){
   // National Contracts: players - 1 out of 6
   const nContracts = pickN(data.nationalContracts, Math.max(0, players-1));
 
-  // Player Packs: create shuffled packs
-  // Nations: choose players nations without duplicates (max 4)
-  const nations = pickN(data.nations, players);
-  // Start contracts: pick players start contracts (allow duplicates? We'll pick without duplicates up to 4)
-  const starts = pickN(data.startContracts, players);
-  // Officers: pick players officers (no duplicates)
-  const officers = pickN(data.officers, players);
+  // Player Packs: ALWAYS create 4 packs (nation + startContract + officer)
+  // Nations: use all 4 nations (fixed order randomized)
+  const nations = shuffle(data.nations); // shuffle to randomize nation order
+  // Start contracts: pick 4 (there are 4 available)
+  const starts = pickN(data.startContracts, Math.min(4, data.startContracts.length));
+  // If there are fewer than 4 startContracts in data, allow repeats to fill to 4
+  while(starts.length < 4){
+    starts.push(...pickN(data.startContracts, 4 - starts.length));
+  }
+  // Officers: pick 4 distinct officers from 7
+  const officers = pickN(data.officers,4);
 
+  // Build exactly 4 packs
   const packs = [];
-  for(let i=0;i<players;i++){
+  for(let i=0;i<4;i++){
     packs.push({
-      player: i+1,
+      slot: i+1,                 // slot number 1..4 (available combinations)
       nation: nations[i],
       startContract: starts[i],
-      officer: officers[i]
+      officer: officers[i],
+      assignedToPlayer: (i < players) ? (i+1) : null // if players<4, only first N slots are assigned
     });
   }
 
@@ -105,6 +114,7 @@ function renderPacks(packs){
   packs.forEach(p=>{
     const div = document.createElement('div');
     div.className = 'pack';
+
     // image placeholders: assets/nations/{nation}.png and assets/officers/{officer}.png
     const nationImg = document.createElement('img');
     nationImg.src = `assets/images/nations/${slug(p.nation)}.png`;
@@ -117,33 +127,5 @@ function renderPacks(packs){
     officerImg.onerror = ()=>{ officerImg.src = 'assets/images/placeholder_officer.png'; };
 
     const info = document.createElement('div');
-    info.innerHTML = `<strong>Player ${p.player}</strong><div>${p.nation} — ${p.startContract}</div><div>Officer: ${p.officer}</div>`;
-
-    div.appendChild(nationImg);
-    div.appendChild(officerImg);
-    div.appendChild(info);
-    container.appendChild(div);
-  });
-}
-
-function copySetup(){
-  if(!window.lastSetup){ alert('Please generate a setup first.'); return; }
-  const s = window.lastSetup;
-  let text = `Barrage Random Setup — ${s.players} players\n\nBonus Tiles (I-V):\n`;
-  s.bonus.forEach((b,i)=> text += `${roman(i+1)}. ${b}\n`);
-  text += `\nAdvanced Tech Tiles:\n${s.adv.join(', ')}\n\nObjective:\n${s.obj}\n\nHeadstream Tiles:\n`;
-  s.head.forEach((h,i)=> text += `Basin ${i+1}: ${h}\n`);
-  text += `\nNational Contracts:\n${s.nContracts.join(', ')}\n\nPlayer Packs:\n`;
-  s.packs.forEach(p=> text += `Player ${p.player}: ${p.nation} / ${p.startContract} / ${p.officer}\n`);
-  navigator.clipboard.writeText(text).then(()=> alert('Setup copied to clipboard.'));
-}
-
-// helpers
-function slug(name){ return name.toLowerCase().replace(/\s+/g,'_').replace(/[^\w\-]/g,''); }
-function roman(n){
-  const romans = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
-  return romans[n-1] || n;
-}
-
-// initial generate
-generateAll();
+    const header = document.createElement('div');
+    header.innerHTML = `<strong>Slot ${p.slot}</strong> ${p.assignedToPlayer
