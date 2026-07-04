@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Barrage Random Setup</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Barrage Random Setup</h1>
+
+    <section class="controls">
+      <div class="players">
+        <label>Select players:</label>
+        <div class="player-buttons">
+          <button class="player-btn" data-players="2">2</button>
+          <button class="player-btn" data-players="3">3</button>
+          <button class="player-btn active" data-players="4">4</button>
+        </div>
+      </div>
+
+      <div class="toggles">
+        <label class="toggle">
+          <input type="checkbox" id="leeghwaterToggle" />
+          <span>The Leeghwater Project</span>
+        </label>
+
+        <button id="randomBtn" class="primary">Random Generate</button>
+        <button id="exportBtn">Copy Setup</button>
+      </div>
+    </section>
+
+    <section id="leeghwaterOptions" class="hidden">
+      <h2>Leeghwater Options</h2>
+      <p class="muted">(Placeholder — options will be added later)</p>
+    </section>
+
+    <section id="results">
+      <h2>Generated Setup</h2>
+
+      <div class="card">
+        <h3>Bonus Tiles (I - V)</h3>
+        <ol id="bonusList"></ol>
+      </div>
+
+      <div class="card">
+        <h3>Advanced Technology Tiles</h3>
+        <ul id="advTechList"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Objective Tile</h3>
+        <div id="objective"></div>
+      </div>
+
+      <div class="card">
+        <h3>Headstream Tiles (Basin I - IV)</h3>
+        <ol id="headstreamList"></ol>
+      </div>
+
+      <div class="card">
+        <h3>National Contract Tiles</h3>
+        <ul id="nationalContracts"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Player Packs</h3>
+        <div id="playerPacks"></div>
+      </div>
+    </section>
+
+    <footer>
+      <small>Note: Images and official assets must be provided by the user and used only with permission.</small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
