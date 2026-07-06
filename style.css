@@ -3,7 +3,7 @@
 }
 *{box-sizing:border-box}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:var(--bg);color:#111}
-.container{max-width:980px;margin:28px auto;padding:20px}
+.container{max-width:980px;margin:28px auto;padding:16px}
 h1{margin:0 0 12px}
 .controls{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 .player-buttons{display:flex;gap:8px}
@@ -13,9 +13,52 @@ h1{margin:0 0 12px}
 .primary{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
 button{cursor:pointer}
 .hidden{display:none}
-.card{background:var(--card);padding:12px;border-radius:8px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-ol,ul{margin:8px 0 0 20px}
-#playerPacks .pack{display:flex;gap:12px;align-items:center;padding:8px;border-bottom:1px dashed #eee}
-.pack img{width:56px;height:56px;object-fit:cover;border-radius:6px}
+.card{background:var(--card);padding:8px 10px;border-radius:8px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06);width:fit-content;max-width:100%}
+.results-card:first-child{width:fit-content;max-width:min(100%, 320px)}
+.results-row{display:flex;flex-wrap:wrap;gap:0;margin-bottom:8px;align-items:flex-start}
+.results-row-two .results-card{margin-right:0}
+.results-row-three .results-card{margin-right:0}
+.results-row-four .results-card{margin-right:0}
+.results-card{margin-bottom:0;width:fit-content;max-width:min(100%, 320px)}
+.national-contracts-section{margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb}
+.national-contracts-section h4{margin:0 0 6px;font-size:16px;font-weight:700;line-height:1.2;color:#111}
+.national-contracts-section ul{margin:0;padding-left:12px}
+ol,ul{margin:6px 0 0 12px;padding-left:0}
+.bonus-tile-item{display:flex;align-items:center;gap:6px;margin-bottom:6px;list-style:none}
+.bonus-tile-number{font-size:16px;font-weight:700;min-width:18px;color:#111}
+.bonus-tile-image{width:84px;height:auto;max-height:84px;object-fit:contain;border-radius:6px}
+.adv-tech-tile-item{display:flex;align-items:center;justify-content:flex-start;margin-bottom:6px;list-style:none}
+.adv-tech-tile-image{width:110px;height:auto;max-height:110px;object-fit:contain;border-radius:6px}
+.headstream-tile-item,.national-contract-item{display:flex;align-items:center;justify-content:flex-start;margin-bottom:6px;list-style:none;padding:0}
+.headstream-tile-number{font-size:16px;font-weight:700;min-width:18px;color:#111}
+.headstream-tile-image{width:68px;height:auto;max-height:68px;object-fit:contain;border-radius:6px}
+.national-contract-image{width:104px;height:auto;max-height:104px;object-fit:contain;border-radius:6px}
+.objective-tile-image{width:182px;height:auto;max-height:182px;object-fit:contain;border-radius:6px}
+#playerPacks .pack{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #eee}
+.pack-visuals{display:flex;gap:10px;align-items:flex-start;flex-shrink:0;flex-direction:column}
+.pack-mini-images{display:flex;gap:8px;align-items:center;flex-direction:column}
+.pack-info{flex:1;display:flex;flex-direction:column;gap:8px}
+.pack-mini-images img{width:90px;height:auto;max-height:90px;object-fit:contain;border-radius:6px}
+.pack-nationboard-wrap{display:flex;justify-content:flex-start}
+.pack-nationboard{width:160px;height:auto;max-height:160px;object-fit:contain;border-radius:8px;cursor:zoom-in}
+.pack-enlarge-btn{margin-top:6px;padding:4px 8px;border:1px solid #d0d7de;border-radius:999px;background:#fff;color:var(--accent);font-size:12px;cursor:pointer}
+.pack-enlarge-btn:hover{background:#f5f9ff}
+.pack-details{display:flex;flex-direction:column;gap:4px}
+.pack-details strong{display:inline-block;min-width:70px}
+.image-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000}
+.image-modal.hidden{display:none}
+.image-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.8)}
+.image-modal-content{position:relative;max-width:min(92vw, 900px);max-height:92vh;padding:12px;border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(0,0,0,0.3)}
+.image-modal-image{display:block;max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px}
+.image-modal-close{position:absolute;top:8px;right:8px;border:none;background:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:20px;line-height:1}
+body.modal-open{overflow:hidden}
 .muted{color:var(--muted)}
-footer{margin-top:18px;color:var(--muted);font-size:13px}
+footer{margin-top:14px;color:var(--muted);font-size:13px}
+
+@media (max-width: 720px){
+  .results-row{grid-template-columns:1fr;gap:10px}
+  #playerPacks .pack{flex-direction:column}
+  .pack-visuals{width:100%;align-items:flex-start}
+  .pack-info{width:100%}
+  .pack-nationboard{width:100%;max-width:160px}
+}

@@ -8,7 +8,7 @@ const data = {
   nationalContracts: ["Contract 1","Contract 2","Contract 3","Contract 4","Contract 5","Contract 6"],
   nations: ["Germany","France","Italy","USA"],
   startContracts: ["Start 1","Start 2","Start 3","Start 4"],
-  officers: ["Wilhelm Adler","Graziano Del Monte","Viktor Fiesler","Jill McDowell","Solomon P. Jordan","Anton Krylov","Mahiri Sekibo"]
+  officers: ["Wilhelm Adler","Graziano Del Monte","Victor Fiesler","Jill McDowell","Solomon P Jordan","Anton Krylov","Mahiri Sekibo"]
 };
 
 function shuffle(arr){
@@ -87,11 +87,11 @@ function generateAll(){
   }
 
   // Render
-  renderList('#bonusList', bonus.map((b,i)=>`${roman(i+1)}. ${b}`));
-  renderList('#advTechList', adv);
-  $('#objective').textContent = obj;
-  renderList('#headstreamList', head.map((h,i)=>`Basin ${i+1}: ${h}`));
-  renderList('#nationalContracts', nContracts);
+  renderBonusTiles('#bonusList', bonus.map(b=>({label:b})));
+  renderAdvTechTiles('#advTechList', adv.map(item=>({label:item})));
+  renderObjectiveTile('#objective', obj);
+  renderHeadstreamTiles('#headstreamList', head);
+  renderNationalContractTiles('#nationalContracts', nContracts);
   renderPacks(packs);
 
   // store last generated for export
@@ -108,24 +108,383 @@ function renderList(selector, items){
   });
 }
 
+function renderBonusTiles(selector, items){
+  const el = $(selector);
+  el.innerHTML = '';
+  items.forEach((item, index)=>{
+    const li = document.createElement('li');
+    li.className = 'bonus-tile-item';
+
+    const numeral = document.createElement('span');
+    numeral.className = 'bonus-tile-number';
+    numeral.textContent = roman(index + 1);
+
+    const img = document.createElement('img');
+    img.className = 'bonus-tile-image';
+    img.alt = item.label;
+    setImageWithFallback(img, 'assets/images/bonustiles', getBonusTileFilename(item.label), 'assets/images/officers/placeholder_officer.png');
+
+    li.appendChild(numeral);
+    li.appendChild(img);
+    el.appendChild(li);
+  });
+}
+
+function renderAdvTechTiles(selector, items){
+  const el = $(selector);
+  el.innerHTML = '';
+  items.forEach(item=>{
+    const li = document.createElement('li');
+    li.className = 'adv-tech-tile-item';
+
+    const img = document.createElement('img');
+    img.className = 'adv-tech-tile-image';
+    img.alt = item.label;
+    setImageWithFallback(img, 'assets/images/advancedtechnologytiles', getAdvTechTileFilename(item.label), 'assets/images/officers/placeholder_officer.png');
+
+    li.appendChild(img);
+    el.appendChild(li);
+  });
+}
+
+function renderObjectiveTile(selector, objective){
+  const el = $(selector);
+  el.innerHTML = '';
+
+  const img = document.createElement('img');
+  img.className = 'objective-tile-image';
+  img.alt = objective;
+  setImageWithFallback(img, 'assets/images/objectivetiles', getObjectiveTileFilename(objective), 'assets/images/officers/placeholder_officer.png');
+
+  el.appendChild(img);
+}
+
+function renderHeadstreamTiles(selector, items){
+  const el = $(selector);
+  el.innerHTML = '';
+
+  items.forEach((item, index)=>{
+    const li = document.createElement('li');
+    li.className = 'headstream-tile-item';
+
+    const numeral = document.createElement('span');
+    numeral.className = 'headstream-tile-number';
+    numeral.textContent = roman(index + 1);
+
+    const img = document.createElement('img');
+    img.className = 'headstream-tile-image';
+    img.alt = `Headstream ${index + 1}`;
+    setImageWithFallback(img, 'assets/images/headstream', getHeadstreamTileFilename(item), 'assets/images/officers/placeholder_officer.png');
+
+    li.appendChild(numeral);
+    li.appendChild(img);
+    el.appendChild(li);
+  });
+}
+
+function renderNationalContractTiles(selector, items){
+  const el = $(selector);
+  el.innerHTML = '';
+
+  items.forEach(item=>{
+    const li = document.createElement('li');
+    li.className = 'national-contract-item';
+
+    const img = document.createElement('img');
+    img.className = 'national-contract-image';
+    img.alt = item;
+    setImageWithFallback(img, 'assets/images/nationalcontracts', getNationalContractFilename(item), 'assets/images/officers/placeholder_officer.png');
+
+    li.appendChild(img);
+    el.appendChild(li);
+  });
+}
+
+function roman(num){
+  const values = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const symbols = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let result = '';
+  let remaining = num;
+
+  for(let i=0;i<values.length;i++){
+    while(remaining >= values[i]){
+      result += symbols[i];
+      remaining -= values[i];
+    }
+  }
+
+  return result;
+}
+
+function slug(str){
+  return String(str)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function copySetup(){
+  if(!window.lastSetup){
+    return;
+  }
+
+  const lines = [
+    `Players: ${window.lastSetup.players}`,
+    `Bonus Tiles: ${window.lastSetup.bonus.map((b,i)=>`${roman(i+1)}. ${b}`).join(', ')}`,
+    `Advanced Tech: ${window.lastSetup.adv.join(', ')}`,
+    `Objective: ${window.lastSetup.obj}`,
+    `Headstreams: ${window.lastSetup.head.map((h,i)=>`Basin ${i+1}: ${h}`).join(', ')}`,
+    `National Contracts: ${window.lastSetup.nContracts.join(', ')}`,
+    `Packs: ${window.lastSetup.packs.map(p=>`Slot ${p.slot} (${p.nation}, ${p.startContract}, ${p.officer})`).join(' | ')}`
+  ];
+
+  const text = lines.join('\n');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>alert('Setup copied to clipboard!'));
+  } else {
+    window.prompt('Copy setup', text);
+  }
+}
+
+function setImageWithFallback(img, directory, baseName, fallbackPath){
+  const candidates = [...new Set([
+    `${baseName}.svg`,
+    `${baseName}.jpg`,
+    `${baseName}.png`,
+    `${baseName.replace(/\s+/g, '_')}.svg`,
+    `${baseName.replace(/\s+/g, '_')}.jpg`,
+    `${baseName.replace(/\s+/g, '_')}.png`,
+    `${slug(baseName)}.svg`,
+    `${slug(baseName)}.jpg`,
+    `${slug(baseName)}.png`,
+    `${baseName.replace(/\s+/g, ' ')}.svg`,
+    `${baseName.replace(/\s+/g, ' ')}.jpg`,
+    `${baseName.replace(/\s+/g, ' ')}.png`
+  ].filter(Boolean))];
+
+  let index = 0;
+  const tryNext = ()=>{
+    if(index >= candidates.length){
+      img.src = fallbackPath;
+      img.onerror = null;
+      return;
+    }
+
+    img.src = `${directory}/${encodeURIComponent(candidates[index++])}`;
+  };
+
+  img.onerror = tryNext;
+  tryNext();
+}
+
+function getFlagFilename(nation){
+  const flagMap = {
+    'France': 'flagfrance',
+    'Germany': 'flaggermany',
+    'Italy': 'flagitaly',
+    'USA': 'flagusa'
+  };
+  return flagMap[nation] || nation;
+}
+
+function getBonusTileFilename(tileName){
+  const map = {
+    'Bonus A': 'bonustile1',
+    'Bonus B': 'bonustile2',
+    'Bonus C': 'bonustile3',
+    'Bonus D': 'bonustile4',
+    'Bonus E': 'bonustile5',
+    'Bonus F': 'bonustile6'
+  };
+  return map[tileName] || `bonustile${tileName}`;
+}
+
+function getAdvTechTileFilename(tileName){
+  const map = {
+    'Base I': 'base1',
+    'Elevation I': 'elevation1',
+    'Conduit I': 'conduit1',
+    'Powerhouse I': 'powerhouse1',
+    'Wildcard I': 'wildcard1'
+  };
+  return map[tileName] || `tile${tileName}`;
+}
+
+function getHeadstreamTileFilename(tileName){
+  const map = {
+    'Headstream A': 'headstream1',
+    'Headstream B': 'headstream2',
+    'Headstream C': 'headstream3',
+    'Headstream D': 'headstream4',
+    'Headstream E': 'headstream5',
+    'Headstream F': 'headstream6',
+    'Headstream G': 'headstream7',
+    'Headstream H': 'headstream8'
+  };
+  return map[tileName] || `headstream${tileName}`;
+}
+
+function getNationalContractFilename(tileName){
+  const map = {
+    'Contract 1': 'nationalcontract1',
+    'Contract 2': 'nationalcontract2',
+    'Contract 3': 'nationalcontract3',
+    'Contract 4': 'nationalcontract4',
+    'Contract 5': 'nationalcontract5',
+    'Contract 6': 'nationalcontract6'
+  };
+  return map[tileName] || `nationalcontract${tileName}`;
+}
+
+function getObjectiveTileFilename(tileName){
+  const map = {
+    'Objective 1': 'objective1',
+    'Objective 2': 'objective2',
+    'Objective 3': 'objective3',
+    'Objective 4': 'objective4',
+    'Objective 5': 'objective5',
+    'Objective 6': 'objective6'
+  };
+  return map[tileName] || `objective${tileName}`;
+}
+
+function getNationboardFilename(nation){
+  const nationboardMap = {
+    'France': 'france',
+    'Germany': 'germany',
+    'Italy': 'italy',
+    'USA': 'usa'
+  };
+  return nationboardMap[nation] || nation;
+}
+
+function getStartContractFilename(contractName){
+  const match = contractName.match(/\d+/);
+  return match ? `startcontract${match[0]}` : contractName;
+}
+
+function ensureImageModal(){
+  let modal = document.getElementById('imageModal');
+  if(modal){
+    return modal;
+  }
+
+  modal = document.createElement('div');
+  modal.id = 'imageModal';
+  modal.className = 'image-modal hidden';
+  modal.innerHTML = `
+    <div class="image-modal-backdrop"></div>
+    <div class="image-modal-content">
+      <button type="button" class="image-modal-close" aria-label="Close enlarged image">×</button>
+      <img class="image-modal-image" alt="Enlarged nationboard" />
+    </div>
+  `;
+
+  modal.querySelector('.image-modal-backdrop').addEventListener('click', closeImageModal);
+  modal.querySelector('.image-modal-close').addEventListener('click', closeImageModal);
+  document.addEventListener('keydown', event=>{
+    if(event.key === 'Escape' && !modal.classList.contains('hidden')){
+      closeImageModal();
+    }
+  });
+
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function openImageModal(src, alt){
+  const modal = ensureImageModal();
+  const image = modal.querySelector('.image-modal-image');
+  image.src = src;
+  image.alt = alt;
+  modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+}
+
+function closeImageModal(){
+  const modal = document.getElementById('imageModal');
+  if(!modal){
+    return;
+  }
+
+  modal.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+}
+
 function renderPacks(packs){
   const container = $('#playerPacks');
   container.innerHTML = '';
+
   packs.forEach(p=>{
     const div = document.createElement('div');
     div.className = 'pack';
 
-    // image placeholders: assets/nations/{nation}.png and assets/officers/{officer}.png
+    const visuals = document.createElement('div');
+    visuals.className = 'pack-visuals';
+
+    const miniImages = document.createElement('div');
+    miniImages.className = 'pack-mini-images';
+
     const nationImg = document.createElement('img');
-    nationImg.src = `assets/images/nations/${slug(p.nation)}.png`;
     nationImg.alt = p.nation;
-    nationImg.onerror = ()=>{ nationImg.src = 'assets/images/placeholder_nation.png'; };
+    setImageWithFallback(nationImg, 'assets/images/officers/nations', getFlagFilename(p.nation), 'assets/images/officers/placeholder_nation.png');
 
     const officerImg = document.createElement('img');
-    officerImg.src = `assets/images/officers/${slug(p.officer)}.png`;
     officerImg.alt = p.officer;
-    officerImg.onerror = ()=>{ officerImg.src = 'assets/images/placeholder_officer.png'; };
+    setImageWithFallback(officerImg, 'assets/images/officers/officers', p.officer, 'assets/images/officers/placeholder_officer.png');
+
+    const startContractImg = document.createElement('img');
+    startContractImg.alt = p.startContract;
+    setImageWithFallback(startContractImg, 'assets/images/officers/startcontract', getStartContractFilename(p.startContract), 'assets/images/officers/placeholder_officer.png');
+
+    miniImages.appendChild(nationImg);
+    miniImages.appendChild(officerImg);
+    miniImages.appendChild(startContractImg);
+
+    const nationboardImg = document.createElement('img');
+    nationboardImg.className = 'pack-nationboard';
+    nationboardImg.alt = `${p.nation} nationboard`;
+    nationboardImg.style.cursor = 'zoom-in';
+    nationboardImg.addEventListener('click', ()=>openImageModal(nationboardImg.src, nationboardImg.alt));
+    setImageWithFallback(nationboardImg, 'assets/images/officers/nationboards', getNationboardFilename(p.nation), 'assets/images/officers/placeholder_nation.png');
+
+    const enlargeBtn = document.createElement('button');
+    enlargeBtn.type = 'button';
+    enlargeBtn.className = 'pack-enlarge-btn';
+    enlargeBtn.textContent = 'Click to enlarge';
+    enlargeBtn.addEventListener('click', event=>{
+      event.stopPropagation();
+      openImageModal(nationboardImg.src, nationboardImg.alt);
+    });
+
+    visuals.appendChild(miniImages);
+    visuals.appendChild(nationboardImg);
 
     const info = document.createElement('div');
-    const header = document.createElement('div');
-    header.innerHTML = `<strong>Slot ${p.slot}</strong> ${p.assignedToPlayer
+    info.className = 'pack-info';
+
+    const nationboardWrap = document.createElement('div');
+    nationboardWrap.className = 'pack-nationboard-wrap';
+    nationboardWrap.appendChild(nationboardImg);
+
+    const buttonWrap = document.createElement('div');
+    buttonWrap.className = 'pack-button-wrap';
+    buttonWrap.appendChild(enlargeBtn);
+
+    const details = document.createElement('div');
+    details.className = 'pack-details';
+    details.innerHTML = `
+      <div><strong>Nation:</strong> ${p.nation}</div>
+      <div><strong>Officer:</strong> ${p.officer}</div>
+    `;
+
+    info.appendChild(nationboardWrap);
+    info.appendChild(buttonWrap);
+    info.appendChild(details);
+
+    div.appendChild(visuals);
+    div.appendChild(info);
+    container.appendChild(div);
+  });
+}

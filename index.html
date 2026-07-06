@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Barrage Random Setup</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
   <main class="container">
@@ -39,33 +39,36 @@
     <section id="results">
       <h2>Generated Setup</h2>
 
-      <div class="card">
-        <h3>Bonus Tiles (I - V)</h3>
-        <ol id="bonusList"></ol>
+      <div class="results-row results-row-two">
+        <div class="card results-card">
+          <h3>Bonus Tiles (I - V)</h3>
+          <ol id="bonusList"></ol>
+        </div>
+
+        <div class="card results-card">
+          <h3>Advanced Technology Tiles</h3>
+          <ul id="advTechList"></ul>
+          <div class="national-contracts-section">
+            <h4>National Contract Tiles</h4>
+            <ul id="nationalContracts"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-row results-row-three">
+        <div class="card results-card">
+          <h3>Objective Tile</h3>
+          <div id="objective"></div>
+        </div>
+
+        <div class="card results-card">
+          <h3>Headstream Tiles</h3>
+          <ol id="headstreamList"></ol>
+        </div>
       </div>
 
       <div class="card">
-        <h3>Advanced Technology Tiles</h3>
-        <ul id="advTechList"></ul>
-      </div>
-
-      <div class="card">
-        <h3>Objective Tile</h3>
-        <div id="objective"></div>
-      </div>
-
-      <div class="card">
-        <h3>Headstream Tiles (Basin I - IV)</h3>
-        <ol id="headstreamList"></ol>
-      </div>
-
-      <div class="card">
-        <h3>National Contract Tiles</h3>
-        <ul id="nationalContracts"></ul>
-      </div>
-
-      <div class="card">
-        <h3>Player Packs</h3>
+        <h3>Player Picks</h3>
         <div id="playerPacks"></div>
       </div>
     </section>
@@ -75,6 +78,6 @@
     </footer>
   </main>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
 </html>
