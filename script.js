@@ -7,8 +7,10 @@ const data = {
   headstreams: ["Headstream A","Headstream B","Headstream C","Headstream D","Headstream E","Headstream F","Headstream G","Headstream H"],
   nationalContracts: ["Contract 1","Contract 2","Contract 3","Contract 4","Contract 5","Contract 6"],
   nations: ["Germany","France","Italy","USA"],
+  additionalNations: ["Netherlands"],
   startContracts: ["Start 1","Start 2","Start 3","Start 4"],
-  officers: ["Wilhelm Adler","Graziano Del Monte","Victor Fiesler","Jill McDowell","Solomon P Jordan","Anton Krylov","Mahiri Sekibo"]
+  officers: ["Wilhelm Adler","Graziano Del Monte","Victor Fiesler","Jill McDowell","Solomon P Jordan","Anton Krylov","Mahiri Sekibo"],
+  additionalOfficers: ["Simone Luciani","Tommaso Battista"]
 };
 
 function shuffle(arr){
@@ -63,16 +65,19 @@ function generateAll(){
   const nContracts = pickN(data.nationalContracts, Math.max(0, players-1));
 
   // Player Packs: ALWAYS create 4 packs (nation + startContract + officer)
-  // Nations: use all 4 nations (fixed order randomized)
-  const nations = shuffle(data.nations); // shuffle to randomize nation order
+  // Nations: default 4 of 4, or 4 of 5 when additional nations are enabled
+  const includeAdditionalNations = $('#additionalNationsToggle').checked;
+  const nationPool = includeAdditionalNations ? data.nations.concat(data.additionalNations) : data.nations;
+  const nations = pickN(nationPool, 4);
   // Start contracts: pick 4 (there are 4 available)
   const starts = pickN(data.startContracts, Math.min(4, data.startContracts.length));
   // If there are fewer than 4 startContracts in data, allow repeats to fill to 4
   while(starts.length < 4){
     starts.push(...pickN(data.startContracts, 4 - starts.length));
   }
-  // Officers: pick 4 distinct officers from 7
-  const officers = pickN(data.officers,4);
+  // Officers: pick 4 distinct officers from base or expanded pool
+  const officerPool = includeAdditionalNations ? data.officers.concat(data.additionalOfficers) : data.officers;
+  const officers = pickN(officerPool,4);
 
   // Build exactly 4 packs
   const packs = [];
@@ -283,6 +288,7 @@ function getFlagFilename(nation){
     'France': 'flagfrance',
     'Germany': 'flaggermany',
     'Italy': 'flagitaly',
+    'Netherlands': 'flagnetherlands',
     'USA': 'flagusa'
   };
   return flagMap[nation] || nation;
@@ -354,9 +360,25 @@ function getNationboardFilename(nation){
     'France': 'france',
     'Germany': 'germany',
     'Italy': 'italy',
+    'Netherlands': 'netherlands',
     'USA': 'usa'
   };
   return nationboardMap[nation] || nation;
+}
+
+function getOfficerFilename(officerName){
+  const officerMap = {
+    'Anton Krylov': 'Anton_Krylov',
+    'Graziano Del Monte': 'Graziano_Del_Monte',
+    'Jill McDowell': 'Jill_McDowell',
+    'Mahiri Sekibo': 'Mahiri_Sekibo',
+    'Simone Luciani': 'simone_luciani',
+    'Solomon P Jordan': 'Solomon_P_Jordan',
+    'Tommaso Battista': 'tommaso_battista',
+    'Victor Fiesler': 'Victor_Fiesler',
+    'Wilhelm Adler': 'Wilhelm_Adler'
+  };
+  return officerMap[officerName] || officerName;
 }
 
 function getStartContractFilename(contractName){
@@ -432,7 +454,7 @@ function renderPacks(packs){
 
     const officerImg = document.createElement('img');
     officerImg.alt = p.officer;
-    setImageWithFallback(officerImg, 'assets/images/officers/officers', p.officer, 'assets/images/officers/placeholder_officer.png');
+    setImageWithFallback(officerImg, 'assets/images/officers/officers', getOfficerFilename(p.officer), 'assets/images/officers/placeholder_officer.png');
 
     const startContractImg = document.createElement('img');
     startContractImg.alt = p.startContract;

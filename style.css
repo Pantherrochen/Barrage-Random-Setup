@@ -56,7 +56,15 @@ body.modal-open{overflow:hidden}
 footer{margin-top:14px;color:var(--muted);font-size:13px}
 
 @media (max-width: 720px){
-  .results-row{grid-template-columns:1fr;gap:10px}
+  .container{padding:12px}
+  .results-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+  .results-card,.results-card:first-child{width:100%;max-width:100%}
+  .card{width:100%;max-width:100%}
+  .bonus-tile-image{width:64px;max-height:64px}
+  .adv-tech-tile-image{width:82px;max-height:82px}
+  .headstream-tile-image{width:54px;max-height:54px}
+  .objective-tile-image{width:100%;max-width:132px;max-height:132px}
+  .national-contract-image{width:76px;max-height:76px}
   #playerPacks .pack{flex-direction:column}
   .pack-visuals{width:100%;align-items:flex-start}
   .pack-info{width:100%}
