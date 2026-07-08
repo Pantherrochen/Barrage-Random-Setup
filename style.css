@@ -37,7 +37,8 @@ ol,ul{margin:6px 0 0 12px;padding-left:0}
 .expansion-tile-list{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;padding:0;list-style:none}
 .expansion-tile-item{display:flex;list-style:none;padding:0}
 .expansion-tile-image{width:112px;height:auto;max-height:112px;object-fit:contain;border-radius:6px}
-#playerPacks .pack{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #eee}
+#playerPacks{display:flex;flex-direction:column;gap:10px}
+#playerPacks .pack{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid #000;border-radius:0;background:#fff}
 .pack-visuals{display:flex;gap:10px;align-items:flex-start;flex-shrink:0;flex-direction:column}
 .pack-mini-images{display:flex;gap:8px;align-items:center;flex-direction:column}
 .pack-info{flex:1;display:flex;flex-direction:column;gap:8px}
