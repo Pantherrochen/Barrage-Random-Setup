@@ -1,8 +1,27 @@
 // script.js (updated)
 // Data
 const data = {
-  bonusTiles: ["Bonus A","Bonus B","Bonus C","Bonus D","Bonus E","Bonus F"],
-  advTech: ["Base I","Elevation I","Conduit I","Powerhouse I","Wildcard I"],
+  bonusTiles: ["Bonus A","Bonus B","Bonus C","Bonus D","Bonus E","Bonus F","Bonus G","Bonus H"],
+  advTech: ["Base I", "Elevation I", "Conduit I", "Powerhouse I", "Wildcard I", "Private Building 1"],
+  externalWorks: [
+    { label: "External Work 1", filename: "externalworks1" },
+    { label: "External Work 2", filename: "externalworks2" },
+    { label: "External Work 3", filename: "externalworks3" },
+    { label: "External Work 4", filename: "externalworks4" },
+    { label: "External Work 5", filename: "externalworks5" }
+  ],
+  privateBuildings: [
+    { label: "Cofferdam", filename: "cofferdam" },
+    { label: "Control Station", filename: "controlstation" },
+    { label: "Customer Office", filename: "costumeroffice" },
+    { label: "Development Office", filename: "developmentoffice" },
+    { label: "Energy Relay Field", filename: "energyrelayfield" },
+    { label: "Financial Division", filename: "financialdivision" },
+    { label: "Loan Agency", filename: "loanagency" },
+    { label: "Research Lab", filename: "researchlab" },
+    { label: "Robot Factory", filename: "robotfactory" },
+    { label: "Wind Farm", filename: "windfarm" }
+  ],
   objectives: ["Objective 1","Objective 2","Objective 3","Objective 4","Objective 5","Objective 6"],
   headstreams: ["Headstream A","Headstream B","Headstream C","Headstream D","Headstream E","Headstream F","Headstream G","Headstream H"],
   nationalContracts: ["Contract 1","Contract 2","Contract 3","Contract 4","Contract 5","Contract 6"],
@@ -10,7 +29,8 @@ const data = {
   additionalNations: ["Netherlands"],
   startContracts: ["Start 1","Start 2","Start 3","Start 4"],
   officers: ["Wilhelm Adler","Graziano Del Monte","Victor Fiesler","Jill McDowell","Solomon P Jordan","Anton Krylov","Mahiri Sekibo"],
-  additionalOfficers: ["Simone Luciani","Tommaso Battista"]
+  additionalOfficers: ["Simone Luciani", "Tommaso Battista"],
+  leeghwaterOfficers: ["Simone Luciani", "Tommaso Battista", "Leslie Spencer", "Margot Fouche"]
 };
 
 function shuffle(arr){
@@ -41,19 +61,49 @@ $all('.player-btn').forEach(btn=>{
 });
 
 // leeghwater toggle
+function syncToggleText(){
+  const leeghwaterChecked = $('#leeghwaterToggle').checked;
+  const additionalChecked = $('#additionalNationsToggle').checked;
+  const options = $('#leeghwaterOptions');
+  const text = $('#leeghwaterOptionsText');
+
+  if(leeghwaterChecked){
+    text.textContent = 'Adds Netherlands, the expanded officer pool, two bonus tiles, the private building tech tile, external works and private buildings.';
+    options.classList.remove('hidden');
+    return;
+  }
+
+  if(additionalChecked){
+    text.textContent = 'Adds Netherlands, Simone Luciani and Tommaso Battista.';
+    options.classList.remove('hidden');
+    return;
+  }
+
+  options.classList.add('hidden');
+}
+
 $('#leeghwaterToggle').addEventListener('change', e=>{
-  $('#leeghwaterOptions').classList.toggle('hidden', !e.target.checked);
+  syncToggleText();
+});
+
+$('#additionalNationsToggle').addEventListener('change', ()=>{
+  syncToggleText();
 });
 
 $('#randomBtn').addEventListener('click', generateAll);
-$('#exportBtn').addEventListener('click', copySetup);
+$('#exportBtn').addEventListener('click', saveSetupAsJpg);
 
 function generateAll(){
-  // Bonus Tiles: pick 5 of 6, order I-V
-  const bonus = pickN(data.bonusTiles,5);
+  const expansionEnabled = $('#leeghwaterToggle').checked;
+  const includeAdditionalNations = expansionEnabled || $('#additionalNationsToggle').checked;
 
-  // Advanced Tech: pick 3 of 5
-  const adv = pickN(data.advTech,3);
+  // Bonus Tiles: pick 5 of 6, order I-V
+  const bonusPool = expansionEnabled ? data.bonusTiles : data.bonusTiles.slice(0, 6);
+  const bonus = pickN(bonusPool,5);
+
+  // Advanced Tech: pick 3 of 5, or 3 of 6 with Leeghwater
+  const advPool = expansionEnabled ? data.advTech : data.advTech.slice(0, 5);
+  const adv = pickN(advPool,3);
 
   // Objective: pick 1 of 6
   const obj = pickN(data.objectives,1)[0];
@@ -66,7 +116,6 @@ function generateAll(){
 
   // Player Packs: ALWAYS create 4 packs (nation + startContract + officer)
   // Nations: default 4 of 4, or 4 of 5 when additional nations are enabled
-  const includeAdditionalNations = $('#additionalNationsToggle').checked;
   const nationPool = includeAdditionalNations ? data.nations.concat(data.additionalNations) : data.nations;
   const nations = pickN(nationPool, 4);
   // Start contracts: pick 4 (there are 4 available)
@@ -76,8 +125,13 @@ function generateAll(){
     starts.push(...pickN(data.startContracts, 4 - starts.length));
   }
   // Officers: pick 4 distinct officers from base or expanded pool
-  const officerPool = includeAdditionalNations ? data.officers.concat(data.additionalOfficers) : data.officers;
+  const officerPool = data.officers
+    .concat($('#additionalNationsToggle').checked ? data.additionalOfficers : [])
+    .concat(expansionEnabled ? data.leeghwaterOfficers.filter(officer=>!data.additionalOfficers.includes(officer)) : []);
   const officers = pickN(officerPool,4);
+
+  const externalWorks = expansionEnabled ? pickN(data.externalWorks,3) : [];
+  const privateBuildings = expansionEnabled ? pickN(data.privateBuildings,5) : [];
 
   // Build exactly 4 packs
   const packs = [];
@@ -98,9 +152,12 @@ function generateAll(){
   renderHeadstreamTiles('#headstreamList', head);
   renderNationalContractTiles('#nationalContracts', nContracts);
   renderPacks(packs);
+  renderExpansionTiles('#externalWorksList', externalWorks, 'assets/images/externalworks', 'assets/images/officers/placeholder_officer.png');
+  renderExpansionTiles('#privateBuildingsList', privateBuildings, 'assets/images/privatbuildings', 'assets/images/officers/placeholder_officer.png');
+  $('#leeghwaterExpansion').classList.toggle('hidden', !expansionEnabled);
 
   // store last generated for export
-  window.lastSetup = {players, bonus, adv, obj, head, nContracts, packs};
+  window.lastSetup = {players, bonus, adv, obj, head, nContracts, packs, expansionEnabled, externalWorks, privateBuildings};
 }
 
 function renderList(selector, items){
@@ -205,6 +262,24 @@ function renderNationalContractTiles(selector, items){
   });
 }
 
+function renderExpansionTiles(selector, items, directory, fallbackPath){
+  const el = $(selector);
+  el.innerHTML = '';
+
+  items.forEach(item=>{
+    const li = document.createElement('li');
+    li.className = 'expansion-tile-item';
+
+    const img = document.createElement('img');
+    img.className = 'expansion-tile-image';
+    img.alt = item.label;
+    setImageWithFallback(img, directory, item.filename, fallbackPath);
+
+    li.appendChild(img);
+    el.appendChild(li);
+  });
+}
+
 function roman(num){
   const values = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
   const symbols = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
@@ -229,27 +304,35 @@ function slug(str){
     .replace(/^-+|-+$/g, '');
 }
 
-function copySetup(){
-  if(!window.lastSetup){
+async function saveSetupAsJpg(){
+  const target = document.querySelector('#results');
+
+  if(!target || typeof window.html2canvas !== 'function'){
+    alert('Image export is not available right now.');
     return;
   }
 
-  const lines = [
-    `Players: ${window.lastSetup.players}`,
-    `Bonus Tiles: ${window.lastSetup.bonus.map((b,i)=>`${roman(i+1)}. ${b}`).join(', ')}`,
-    `Advanced Tech: ${window.lastSetup.adv.join(', ')}`,
-    `Objective: ${window.lastSetup.obj}`,
-    `Headstreams: ${window.lastSetup.head.map((h,i)=>`Basin ${i+1}: ${h}`).join(', ')}`,
-    `National Contracts: ${window.lastSetup.nContracts.join(', ')}`,
-    `Packs: ${window.lastSetup.packs.map(p=>`Slot ${p.slot} (${p.nation}, ${p.startContract}, ${p.officer})`).join(' | ')}`
-  ];
+  const canvas = await window.html2canvas(target, {
+    backgroundColor: '#f7f8fb',
+    scale: 2,
+    useCORS: true
+  });
 
-  const text = lines.join('\n');
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(()=>alert('Setup copied to clipboard!'));
-  } else {
-    window.prompt('Copy setup', text);
-  }
+  canvas.toBlob(blob=>{
+    if(!blob){
+      alert('Could not create the JPG download.');
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'barrage-setup.jpg';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }, 'image/jpeg', 0.95);
 }
 
 function setImageWithFallback(img, directory, baseName, fallbackPath){
@@ -301,7 +384,9 @@ function getBonusTileFilename(tileName){
     'Bonus C': 'bonustile3',
     'Bonus D': 'bonustile4',
     'Bonus E': 'bonustile5',
-    'Bonus F': 'bonustile6'
+    'Bonus F': 'bonustile6',
+    'Bonus G': 'bonustile7',
+    'Bonus H': 'bonustile8'
   };
   return map[tileName] || `bonustile${tileName}`;
 }
@@ -312,7 +397,8 @@ function getAdvTechTileFilename(tileName){
     'Elevation I': 'elevation1',
     'Conduit I': 'conduit1',
     'Powerhouse I': 'powerhouse1',
-    'Wildcard I': 'wildcard1'
+    'Wildcard I': 'wildcard1',
+    'Private Building 1': 'privatebuilding1'
   };
   return map[tileName] || `tile${tileName}`;
 }
@@ -372,6 +458,8 @@ function getOfficerFilename(officerName){
     'Graziano Del Monte': 'Graziano_Del_Monte',
     'Jill McDowell': 'Jill_McDowell',
     'Mahiri Sekibo': 'Mahiri_Sekibo',
+    'Leslie Spencer': 'leslie_spencer',
+    'Margot Fouche': 'margot_fouche',
     'Simone Luciani': 'simone_luciani',
     'Solomon P Jordan': 'Solomon_P_Jordan',
     'Tommaso Battista': 'tommaso_battista',

@@ -32,13 +32,13 @@
         </label>
 
         <button id="randomBtn" class="primary">Random Generate</button>
-        <button id="exportBtn">Copy Setup</button>
+        <button id="exportBtn">Save setup as .jpg</button>
       </div>
     </section>
 
     <section id="leeghwaterOptions" class="hidden">
       <h2>Leeghwater Options</h2>
-      <p class="muted">(Placeholder — options will be added later)</p>
+      <p id="leeghwaterOptionsText" class="muted">Adds Netherlands, the expanded officer pool, two bonus tiles, the private building tech tile, external works and private buildings.</p>
     </section>
 
     <section id="results">
@@ -77,6 +77,18 @@
         <div id="playerPacks"></div>
       </div>
 
+      <div id="leeghwaterExpansion" class="results-row results-row-two hidden">
+        <div class="card results-card">
+          <h3>External Works</h3>
+          <ul id="externalWorksList" class="expansion-tile-list"></ul>
+        </div>
+
+        <div class="card results-card">
+          <h3>Private Buildings</h3>
+          <ul id="privateBuildingsList" class="expansion-tile-list"></ul>
+        </div>
+      </div>
+
       <p class="muted">Barrage Random Setup created by Pantherrochen</p>
     </section>
 
@@ -85,6 +97,7 @@
     </footer>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="script.js?v=2"></script>
 </body>
 </html>
