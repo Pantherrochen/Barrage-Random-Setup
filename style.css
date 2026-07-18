@@ -47,7 +47,7 @@ ol,ul{margin:6px 0 0 12px;padding-left:0}
 .pack-mini-images img{width:90px;height:auto;max-height:90px;object-fit:contain;border-radius:6px}
 .rules-trigger{position:relative;display:inline-flex;align-items:flex-start;justify-content:flex-start;padding:0;border:none;background:transparent;cursor:pointer;border-radius:8px}
 .rules-trigger img{display:block}
-.rules-plus-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);color:#16a34a;font-weight:700;font-size:14px;line-height:1;pointer-events:none}
+.rules-plus-badge{position:absolute;bottom:4px;right:4px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);color:#16a34a;font-weight:700;font-size:14px;line-height:1;pointer-events:none}
 #objective .rules-plus-badge{right:-8px}
 .pack-mini-images .rules-trigger{width:90px;border-radius:6px}
 .pack-mini-images .rules-trigger img{width:90px;height:auto;max-height:90px;object-fit:contain;border-radius:6px}
