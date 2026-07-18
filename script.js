@@ -33,6 +33,32 @@ const data = {
   leeghwaterOfficers: ["Simone Luciani", "Tommaso Battista", "Leslie Spencer", "Margot Fouche"]
 };
 
+const rulePdfPaths = {
+  objectiveTiles: 'assets/images/rules/objectivetiles.pdf',
+  privateBuildings: 'assets/images/rules/Private%20Buildings.pdf',
+  officersCoreGame: 'assets/images/rules/XOs%20Core%20Game.pdf',
+  officersExpansion: 'assets/images/rules/XOs%20Expansion.pdf'
+};
+
+const officersCoreGame = new Set([
+  'Anton Krylov',
+  'Graziano Del Monte',
+  'Jill McDowell',
+  'Mahiri Sekibo',
+  'Solomon P Jordan',
+  'Victor Fiesler',
+  'Wilhelm Adler'
+]);
+
+const officersExpansion = new Set([
+  'Leslie Spencer',
+  'Margot Fouche',
+  'Simone Luciani',
+  'Tommaso Battista'
+]);
+
+let pinnedRulesPdf = null;
+
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -153,7 +179,7 @@ function generateAll(){
   renderNationalContractTiles('#nationalContracts', nContracts);
   renderPacks(packs);
   renderExpansionTiles('#externalWorksList', externalWorks, 'assets/images/externalworks', 'assets/images/officers/placeholder_officer.png');
-  renderExpansionTiles('#privateBuildingsList', privateBuildings, 'assets/images/privatbuildings', 'assets/images/officers/placeholder_officer.png');
+  renderExpansionTiles('#privateBuildingsList', privateBuildings, 'assets/images/privatbuildings', 'assets/images/officers/placeholder_officer.png', rulePdfPaths.privateBuildings, 'Private Buildings Rules');
   $('#leeghwaterExpansion').classList.toggle('hidden', !expansionEnabled);
 
   // store last generated for export
@@ -217,6 +243,7 @@ function renderObjectiveTile(selector, objective){
   img.className = 'objective-tile-image';
   img.alt = objective;
   setImageWithFallback(img, 'assets/images/objectivetiles', getObjectiveTileFilename(objective), 'assets/images/officers/placeholder_officer.png');
+  attachRulesPreview(img, rulePdfPaths.objectiveTiles, 'Objective Tiles Rules');
 
   el.appendChild(img);
 }
@@ -262,7 +289,7 @@ function renderNationalContractTiles(selector, items){
   });
 }
 
-function renderExpansionTiles(selector, items, directory, fallbackPath){
+function renderExpansionTiles(selector, items, directory, fallbackPath, rulesPdfPath, rulesTitle){
   const el = $(selector);
   el.innerHTML = '';
 
@@ -274,6 +301,9 @@ function renderExpansionTiles(selector, items, directory, fallbackPath){
     img.className = 'expansion-tile-image';
     img.alt = item.label;
     setImageWithFallback(img, directory, item.filename, fallbackPath);
+    if(rulesPdfPath){
+      attachRulesPreview(img, rulesPdfPath, rulesTitle || `${item.label} Rules`);
+    }
 
     li.appendChild(img);
     el.appendChild(li);
@@ -543,6 +573,10 @@ function renderPacks(packs){
     const officerImg = document.createElement('img');
     officerImg.alt = p.officer;
     setImageWithFallback(officerImg, 'assets/images/officers/officers', getOfficerFilename(p.officer), 'assets/images/officers/placeholder_officer.png');
+    const officerRulesPdf = getOfficerRulesPdf(p.officer);
+    if(officerRulesPdf){
+      attachRulesPreview(officerImg, officerRulesPdf, `${p.officer} Officer Rules`);
+    }
 
     const startContractImg = document.createElement('img');
     startContractImg.alt = p.startContract;
@@ -596,5 +630,124 @@ function renderPacks(packs){
     div.appendChild(visuals);
     div.appendChild(info);
     container.appendChild(div);
+  });
+}
+
+function getOfficerRulesPdf(officerName){
+  if(officersCoreGame.has(officerName)){
+    return rulePdfPaths.officersCoreGame;
+  }
+
+  if(officersExpansion.has(officerName)){
+    return rulePdfPaths.officersExpansion;
+  }
+
+  return null;
+}
+
+function ensureRulesPreviewPanel(){
+  let panel = document.getElementById('rulesPreviewPanel');
+  if(panel){
+    return panel;
+  }
+
+  const results = document.getElementById('results');
+  if(!results){
+    return null;
+  }
+
+  panel = document.createElement('section');
+  panel.id = 'rulesPreviewPanel';
+  panel.className = 'card rules-preview hidden';
+  panel.innerHTML = `
+    <div class="rules-preview-header">
+      <h3>Rules Reference</h3>
+      <button id="rulesPreviewClose" type="button" aria-label="Close rules preview">Close</button>
+    </div>
+    <p id="rulesPreviewTitle" class="muted">Hover or click a supported image to preview its rules PDF.</p>
+    <iframe id="rulesPreviewFrame" title="Rules PDF preview" loading="lazy"></iframe>
+  `;
+
+  const footerNote = results.querySelector('.muted');
+  if(footerNote && footerNote.parentElement === results){
+    results.insertBefore(panel, footerNote);
+  }else{
+    results.appendChild(panel);
+  }
+
+  panel.querySelector('#rulesPreviewClose').addEventListener('click', ()=>{
+    pinnedRulesPdf = null;
+    hideRulesPreview();
+  });
+
+  return panel;
+}
+
+function showRulesPreview(pdfPath, title, keepOpen){
+  const panel = ensureRulesPreviewPanel();
+  if(!panel){
+    return;
+  }
+
+  if(keepOpen){
+    pinnedRulesPdf = pdfPath;
+  }
+
+  const frame = panel.querySelector('#rulesPreviewFrame');
+  const titleEl = panel.querySelector('#rulesPreviewTitle');
+
+  if(frame.getAttribute('src') !== pdfPath){
+    frame.setAttribute('src', pdfPath);
+  }
+
+  titleEl.textContent = title;
+  panel.classList.remove('hidden');
+}
+
+function hideRulesPreview(){
+  const panel = document.getElementById('rulesPreviewPanel');
+  if(!panel){
+    return;
+  }
+
+  const frame = panel.querySelector('#rulesPreviewFrame');
+  frame.removeAttribute('src');
+  panel.classList.add('hidden');
+}
+
+function attachRulesPreview(img, pdfPath, title){
+  img.style.cursor = 'pointer';
+  img.addEventListener('mouseenter', ()=>{
+    showRulesPreview(pdfPath, title, false);
+  });
+  img.addEventListener('focus', ()=>{
+    showRulesPreview(pdfPath, title, false);
+  });
+  img.addEventListener('mouseleave', ()=>{
+    if(pinnedRulesPdf && pinnedRulesPdf !== pdfPath){
+      showRulesPreview(pinnedRulesPdf, 'Pinned Rules Reference', false);
+      return;
+    }
+
+    if(pinnedRulesPdf !== pdfPath){
+      hideRulesPreview();
+    }
+  });
+  img.addEventListener('blur', ()=>{
+    if(pinnedRulesPdf && pinnedRulesPdf !== pdfPath){
+      showRulesPreview(pinnedRulesPdf, 'Pinned Rules Reference', false);
+      return;
+    }
+
+    if(pinnedRulesPdf !== pdfPath){
+      hideRulesPreview();
+    }
+  });
+  img.addEventListener('click', ()=>{
+    showRulesPreview(pdfPath, title, true);
+    const panel = document.getElementById('rulesPreviewPanel');
+    if(panel){
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 }
