@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Barrage Random Setup</title>
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=12" />
 </head>
 <body>
   <main class="container">
@@ -65,12 +65,17 @@
 
       <div class="results-row results-row-three">
         <div class="card results-card">
-          <h3>Objective Tile</h3>
+          <h3 class="compact-section-title">Objective<br>Tile</h3>
           <div id="objective"></div>
         </div>
 
         <div class="card results-card">
-          <h3>Headstream Tiles</h3>
+          <h3 class="compact-section-title">Starting<br>Dams</h3>
+          <ol id="startingDamsList"></ol>
+        </div>
+
+        <div class="card results-card">
+          <h3 class="compact-section-title">Headstream<br>Tiles</h3>
           <ol id="headstreamList"></ol>
         </div>
       </div>
@@ -101,6 +106,6 @@
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

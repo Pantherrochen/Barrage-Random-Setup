@@ -23,6 +23,9 @@ const data = {
     { label: "Wind Farm", filename: "windfarm" }
   ],
   objectives: ["Objective 1","Objective 2","Objective 3","Objective 4","Objective 5","Objective 6"],
+  startingDamsM: ["m1", "m2", "m3", "m4"],
+  startingDamsH: ["h1", "h2", "h3"],
+  startingDamsP: ["p1", "p2", "p3"],
   headstreams: ["Headstream A","Headstream B","Headstream C","Headstream D","Headstream E","Headstream F","Headstream G","Headstream H"],
   nationalContracts: ["Contract 1","Contract 2","Contract 3","Contract 4","Contract 5","Contract 6"],
   nations: ["Germany","France","Italy","USA"],
@@ -132,6 +135,9 @@ function generateAll(){
   // Objective: pick 1 of 6
   const obj = pickN(data.objectives,1)[0];
 
+  // Starting Dams: exactly 3 tiles total (M top, H middle, P bottom)
+  const startingDams = buildStartingDams();
+
   // Headstream: pick 4 of 8, order Basin I-IV
   const head = pickN(data.headstreams,4);
 
@@ -173,6 +179,7 @@ function generateAll(){
   renderBonusTiles('#bonusList', bonus.map(b=>({label:b})));
   renderAdvTechTiles('#advTechList', adv.map(item=>({label:item})));
   renderObjectiveTile('#objective', obj);
+  renderStartingDamTiles('#startingDamsList', startingDams);
   renderHeadstreamTiles('#headstreamList', head);
   renderNationalContractTiles('#nationalContracts', nContracts);
   renderPacks(packs);
@@ -181,7 +188,7 @@ function generateAll(){
   $('#leeghwaterExpansion').classList.toggle('hidden', !expansionEnabled);
 
   // store last generated for export
-  window.lastSetup = {players, bonus, adv, obj, head, nContracts, packs, expansionEnabled, externalWorks, privateBuildings};
+  window.lastSetup = {players, bonus, adv, obj, startingDams, head, nContracts, packs, expansionEnabled, externalWorks, privateBuildings};
 }
 
 function renderList(selector, items){
@@ -267,6 +274,42 @@ function renderHeadstreamTiles(selector, items){
     li.appendChild(img);
     el.appendChild(li);
   });
+}
+
+function renderStartingDamTiles(selector, items){
+  const el = $(selector);
+  el.innerHTML = '';
+
+  const li = document.createElement('li');
+  li.className = 'starting-dam-tile-item';
+
+  const mImg = document.createElement('img');
+  mImg.className = 'starting-dam-tile-image';
+  mImg.alt = 'Starting Dam Top';
+  setImageWithFallback(mImg, 'assets/images/startingdams', items.m, 'assets/images/officers/placeholder_officer.png');
+
+  const hImg = document.createElement('img');
+  hImg.className = 'starting-dam-tile-image';
+  hImg.alt = 'Starting Dam Middle';
+  setImageWithFallback(hImg, 'assets/images/startingdams', items.h, 'assets/images/officers/placeholder_officer.png');
+
+  const pImg = document.createElement('img');
+  pImg.className = 'starting-dam-tile-image';
+  pImg.alt = 'Starting Dam Bottom';
+  setImageWithFallback(pImg, 'assets/images/startingdams', items.p, 'assets/images/officers/placeholder_officer.png');
+
+  li.appendChild(mImg);
+  li.appendChild(hImg);
+  li.appendChild(pImg);
+  el.appendChild(li);
+}
+
+function buildStartingDams(){
+  return {
+    m: pickN(data.startingDamsM, 1)[0],
+    h: pickN(data.startingDamsH, 1)[0],
+    p: pickN(data.startingDamsP, 1)[0]
+  };
 }
 
 function renderNationalContractTiles(selector, items){
