@@ -106,3 +106,28 @@ footer{margin-top:14px;color:var(--muted);font-size:13px}
   .pack-info{width:auto;flex:1}
   .pack-nationboard{width:100%;max-width:160px}
 }
+
+@media (min-width: 380px) and (max-width: 430px){
+  .container{max-width:100%;padding:10px}
+  h1{font-size:40px;margin-bottom:10px}
+  .controls{gap:10px;margin-bottom:12px}
+  .player-btn{padding:7px 10px;font-size:14px}
+  .toggle{font-size:14px;line-height:1.2}
+  #randomBtn,#exportBtn{padding:6px 8px;font-size:12px}
+  .rules-tooltip{font-size:11px;padding:3px 7px}
+
+  .results-row{gap:6px}
+  .results-row-three{gap:5px}
+  .card{padding:6px}
+  .card h3,.card h4{font-size:13px}
+  .compact-section-title{font-size:12px;line-height:1.05}
+
+  .headstream-tile-image{width:40px;max-height:40px}
+  .starting-dam-tile-image{width:44px;max-height:44px}
+  .objective-tile-image{width:138px;max-width:138px;max-height:138px}
+  .headstream-tile-number{font-size:11px;min-width:9px}
+
+  .pack-mini-images img{width:78px;max-height:78px}
+  .pack-nationboard{max-width:140px}
+  .pack-enlarge-btn{font-size:11px;padding:3px 7px}
+}
