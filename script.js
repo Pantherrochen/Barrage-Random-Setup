@@ -78,11 +78,11 @@ function isPhoneScreen(){
 }
 
 function getStartingDamDirectory(){
-  return isPhoneScreen() ? 'assets/images-mobile/startingdams' : 'assets/images/startingdams';
+  return 'assets/images-mobile/startingdams';
 }
 
 function getNationboardDirectory(){
-  return isPhoneScreen() ? 'assets/images-mobile/officers/nationboards' : 'assets/images/officers/nationboards';
+  return 'assets/images-mobile/officers/nationboards';
 }
 
 function $(sel){return document.querySelector(sel)}
