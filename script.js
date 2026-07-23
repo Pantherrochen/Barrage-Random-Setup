@@ -73,6 +73,18 @@ function pickN(arr,n){
   return shuffle(arr).slice(0,n);
 }
 
+function isPhoneScreen(){
+  return window.matchMedia('(max-width: 720px)').matches;
+}
+
+function getStartingDamDirectory(){
+  return isPhoneScreen() ? 'assets/images-mobile/startingdams' : 'assets/images/startingdams';
+}
+
+function getNationboardDirectory(){
+  return isPhoneScreen() ? 'assets/images-mobile/officers/nationboards' : 'assets/images/officers/nationboards';
+}
+
 function $(sel){return document.querySelector(sel)}
 function $all(sel){return Array.from(document.querySelectorAll(sel))}
 
@@ -279,6 +291,7 @@ function renderHeadstreamTiles(selector, items){
 function renderStartingDamTiles(selector, items){
   const el = $(selector);
   el.innerHTML = '';
+  const startingDamDirectory = getStartingDamDirectory();
 
   const li = document.createElement('li');
   li.className = 'starting-dam-tile-item';
@@ -286,17 +299,23 @@ function renderStartingDamTiles(selector, items){
   const mImg = document.createElement('img');
   mImg.className = 'starting-dam-tile-image';
   mImg.alt = 'Starting Dam Top';
-  setImageWithFallback(mImg, 'assets/images/startingdams', items.m, 'assets/images/officers/placeholder_officer.png');
+  mImg.loading = 'lazy';
+  mImg.decoding = 'async';
+  setImageWithFallback(mImg, startingDamDirectory, items.m, 'assets/images/officers/placeholder_officer.png');
 
   const hImg = document.createElement('img');
   hImg.className = 'starting-dam-tile-image';
   hImg.alt = 'Starting Dam Middle';
-  setImageWithFallback(hImg, 'assets/images/startingdams', items.h, 'assets/images/officers/placeholder_officer.png');
+  hImg.loading = 'lazy';
+  hImg.decoding = 'async';
+  setImageWithFallback(hImg, startingDamDirectory, items.h, 'assets/images/officers/placeholder_officer.png');
 
   const pImg = document.createElement('img');
   pImg.className = 'starting-dam-tile-image';
   pImg.alt = 'Starting Dam Bottom';
-  setImageWithFallback(pImg, 'assets/images/startingdams', items.p, 'assets/images/officers/placeholder_officer.png');
+  pImg.loading = 'lazy';
+  pImg.decoding = 'async';
+  setImageWithFallback(pImg, startingDamDirectory, items.p, 'assets/images/officers/placeholder_officer.png');
 
   li.appendChild(mImg);
   li.appendChild(hImg);
@@ -411,15 +430,19 @@ async function saveSetupAsJpg(){
 
 function setImageWithFallback(img, directory, baseName, fallbackPath){
   const candidates = [...new Set([
+    `${baseName}.webp`,
     `${baseName}.svg`,
     `${baseName}.jpg`,
     `${baseName}.png`,
+    `${baseName.replace(/\s+/g, '_')}.webp`,
     `${baseName.replace(/\s+/g, '_')}.svg`,
     `${baseName.replace(/\s+/g, '_')}.jpg`,
     `${baseName.replace(/\s+/g, '_')}.png`,
+    `${slug(baseName)}.webp`,
     `${slug(baseName)}.svg`,
     `${slug(baseName)}.jpg`,
     `${slug(baseName)}.png`,
+    `${baseName.replace(/\s+/g, ' ')}.webp`,
     `${baseName.replace(/\s+/g, ' ')}.svg`,
     `${baseName.replace(/\s+/g, ' ')}.jpg`,
     `${baseName.replace(/\s+/g, ' ')}.png`
@@ -635,9 +658,11 @@ function renderPacks(packs){
     const nationboardImg = document.createElement('img');
     nationboardImg.className = 'pack-nationboard';
     nationboardImg.alt = `${p.nation} nationboard`;
+    nationboardImg.loading = 'lazy';
+    nationboardImg.decoding = 'async';
     nationboardImg.style.cursor = 'zoom-in';
     nationboardImg.addEventListener('click', ()=>openImageModal(nationboardImg.src, nationboardImg.alt));
-    setImageWithFallback(nationboardImg, 'assets/images/officers/nationboards', getNationboardFilename(p.nation), 'assets/images/officers/placeholder_nation.png');
+    setImageWithFallback(nationboardImg, getNationboardDirectory(), getNationboardFilename(p.nation), 'assets/images/officers/placeholder_nation.png');
 
     const enlargeBtn = document.createElement('button');
     enlargeBtn.type = 'button';

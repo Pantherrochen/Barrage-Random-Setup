@@ -22,8 +22,8 @@ button{cursor:pointer}
 .results-row-three .results-card{margin-right:0}
 .results-row-four .results-card{margin-right:0}
 .results-card{margin-bottom:0;width:fit-content;max-width:min(100%, 320px)}
-.results-row-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:start}
-.results-row-three .results-card{width:100%;max-width:100%;min-width:0}
+.results-row-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch}
+.results-row-three .results-card{width:100%;max-width:100%;min-width:0;display:flex;flex-direction:column}
 .results-row-three .results-card{padding:6px 8px}
 .results-row-three .results-card h3{margin:0 0 6px}
 .compact-section-title{line-height:inherit;font-size:inherit}
@@ -39,12 +39,15 @@ ol,ul{margin:6px 0 0 12px;padding-left:0}
 .adv-tech-tile-image{width:110px;height:auto;max-height:110px;object-fit:contain;border-radius:6px}
 .headstream-tile-item,.national-contract-item{display:flex;align-items:center;justify-content:flex-start;margin-bottom:6px;list-style:none;padding:0}
 .headstream-tile-number{font-size:16px;font-weight:700;min-width:18px;color:#111}
-.headstream-tile-image{width:48px;height:auto;max-height:48px;object-fit:contain;border-radius:6px}
+.headstream-tile-image{width:58px;height:auto;max-height:58px;object-fit:contain;border-radius:6px}
 #startingDamsList{display:block;margin:6px 0 0;padding:0;list-style:none}
-.starting-dam-tile-item{display:flex;flex-direction:column;align-items:center;gap:4px;list-style:none;padding:0;margin:0}
-.starting-dam-tile-image{width:42px;height:auto;max-height:42px;object-fit:contain;border-radius:6px}
+.starting-dam-tile-item{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:space-between;gap:4px;list-style:none;padding:0;margin:0;min-height:0}
+.starting-dam-tile-image{width:64px;height:auto;max-height:64px;object-fit:contain;border-radius:6px}
 .national-contract-image{width:104px;height:auto;max-height:104px;object-fit:contain;border-radius:6px}
-.objective-tile-image{width:132px;height:auto;max-height:132px;object-fit:contain;border-radius:6px}
+.objective-tile-image{width:192px;height:auto;max-height:192px;object-fit:contain;border-radius:6px}
+#objective{display:flex;flex:1;align-items:center;justify-content:center;min-height:0}
+#objective .rules-trigger{display:flex;align-items:center;justify-content:center}
+#startingDamsList{display:flex;flex:1;align-items:center;justify-content:center;margin:0;padding:0;min-height:0}
 .expansion-tile-list{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;padding:0;list-style:none}
 .expansion-tile-item{display:flex;list-style:none;padding:0}
 .expansion-tile-image{width:112px;height:auto;max-height:112px;object-fit:contain;border-radius:6px}
@@ -57,7 +60,7 @@ ol,ul{margin:6px 0 0 12px;padding-left:0}
 .rules-trigger{position:relative;display:inline-flex;align-items:flex-start;justify-content:flex-start;padding:0;border:none;background:transparent;cursor:pointer;border-radius:8px}
 .rules-trigger img{display:block}
 .rules-plus-badge{position:absolute;bottom:4px;right:4px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);color:#16a34a;font-weight:700;font-size:14px;line-height:1;pointer-events:none}
-#objective .rules-plus-badge{left:4px;right:auto}
+#objective .rules-plus-badge{left:32px;right:auto;bottom:2px}
 #privateBuildingsList .rules-plus-badge{left:4px;right:auto}
 .pack-mini-images .rules-trigger{width:90px;border-radius:6px}
 .pack-mini-images .rules-trigger img{width:90px;height:auto;max-height:90px;object-fit:contain;border-radius:6px}
@@ -81,15 +84,15 @@ footer{margin-top:14px;color:var(--muted);font-size:13px}
 @media (max-width: 720px){
   .container{padding:12px}
   .results-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:stretch}
-  .results-row-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:start}
+  .results-row-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:stretch}
   .results-row-three .results-card{min-width:0}
   .results-card,.results-card:first-child{width:100%;max-width:100%;height:100%;display:flex;flex-direction:column}
   .card{width:100%;max-width:100%}
   .bonus-tile-image{width:64px;max-height:64px}
   .adv-tech-tile-image{width:82px;max-height:82px}
-  .headstream-tile-image{width:36px;max-height:36px}
-  .starting-dam-tile-image{width:34px;max-height:34px}
-  .objective-tile-image{width:100%;max-width:82px;max-height:82px}
+  .headstream-tile-image{width:43px;max-height:43px}
+  .starting-dam-tile-image{width:48px;max-height:48px}
+  .objective-tile-image{width:144px;max-width:144px;max-height:144px}
   .compact-section-title{font-size:13px;line-height:1.05}
   .results-row-three .results-card{padding:5px 4px}
   .results-row-three .results-card h3{margin:0 0 4px}
